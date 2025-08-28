@@ -1,66 +1,76 @@
-// Counter elements
-const lifeEl = document.querySelector("header div div:nth-child(1) p"); // Life count
-const coinEl = document.querySelector("header div div:nth-child(2) p"); // Coin count
-const copyEl = document.querySelector("header div div:nth-child(3) p"); // Copy count
-const historyList = document.querySelector(".history-list");
-const noCallsMsg = document.getElementById("no-calls");
-const clearBtn = document.getElementById("btn-clear");
+// script.js
 
-// Initial values
-let life = 0;
-let coin = 100;
-let copy = 0;
+// DOM elements
+const lifeCount = document.querySelector('.flex.items-center.justify-center:nth-child(1) p');
+const coinCount = document.querySelector('.flex.items-center.justify-center:nth-child(2) p');
+const copyCount = document.querySelector('.flex.items-center.justify-center:nth-child(3) p');
+const historyList = document.querySelector('.history-list');
+const noCalls = document.getElementById('no-calls');
+const clearBtn = document.getElementById('btn-clear');
+const heartButtons = document.querySelectorAll('.btn-heart');
+const copyButtons = document.querySelectorAll('.bg-gray-200.text-gray-700');
+const callButtons = document.querySelectorAll('.btn-call');
 
-// ✅ Life button click
-document.querySelectorAll(".btn-heart").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    life++;
-    lifeEl.textContent = life;
-  });
-});
-
-// ✅ Copy button click
-document.querySelectorAll("button").forEach((btn) => {
-  if (btn.textContent.trim() === "Copy") {
-    btn.addEventListener("click", () => {
-      copy++;
-      copyEl.textContent = copy;
+// Heart button functionality (increment life)
+heartButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        let currentLife = parseInt(lifeCount.textContent);
+        lifeCount.textContent = currentLife + 1;
     });
-  }
 });
 
-// ✅ Call button click
-document.querySelectorAll(".btn-call").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (coin >= 20) {
-      coin -= 20;
-      coinEl.textContent = coin;
-
-      // Call info
-      const card = btn.closest(".relative");
-      const serviceName = card.querySelector("h3").textContent;
-      const serviceNumber = card.querySelector("p.text-3xl").textContent;
-
-      // Remove "No calls yet"
-      if (noCallsMsg) noCallsMsg.remove();
-
-      // Add to history
-      const callItem = document.createElement("p");
-      callItem.classList.add("border-b", "p-2", "text-sm");
-      callItem.textContent = `Called ${serviceName} (${serviceNumber})`;
-      historyList.appendChild(callItem);
-    } else {
-      alert("Not enough coins to make a call!");
-    }
-  });
+// Copy button functionality
+copyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const card = button.closest('.relative');
+        const number = card.querySelector('p.text-3xl').textContent;
+        
+        // Copy to clipboard
+        navigator.clipboard.writeText(number).then(() => {
+            let currentCopy = parseInt(copyCount.textContent);
+            copyCount.textContent = currentCopy + 1;
+            alert(`Copied: ${number}`);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
+    });
 });
 
-// ✅ Clear history
-clearBtn.addEventListener("click", () => {
-  historyList.innerHTML = "";
-  const noCalls = document.createElement("p");
-  noCalls.id = "no-calls";
-  noCalls.classList.add("text-center", "text-gray-400");
-  noCalls.textContent = "No calls yet. Your calls will appear here.";
-  historyList.appendChild(noCalls);
+// Call button functionality
+callButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        let currentCoins = parseInt(coinCount.textContent);
+        if (currentCoins < 20) {
+            alert('Not enough coins to make a call!');
+            return;
+        }
+
+        // Deduct 20 coins
+        coinCount.textContent = currentCoins - 20;
+
+        // Get service details
+        const card = button.closest('.relative');
+        const serviceName = card.querySelector('h3').textContent;
+        const number = card.querySelector('p.text-3xl').textContent;
+
+        // Remove "No calls" message if present
+        if (noCalls) {
+            noCalls.style.display = 'none';
+        }
+
+        // Add to call history
+        const historyItem = document.createElement('div');
+        historyItem.classList.add('p-2', 'border-b', 'border-gray-200');
+        historyItem.innerHTML = `
+            <p class="font-semibold">${serviceName}</p>
+            <p class="text-sm text-gray-600">${number}</p>
+            <p class="text-xs text-gray-400">${new Date().toLocaleString()}</p>
+        `;
+        historyList.appendChild(historyItem);
+    });
+});
+
+// Clear history button
+clearBtn.addEventListener('click', () => {
+    historyList.innerHTML = '<p id="no-calls" class="text-center text-gray-400">No calls yet. Your calls will appear here.</p>';
 });

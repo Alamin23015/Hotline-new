@@ -29,7 +29,7 @@ copyButtons.forEach(button => {
         navigator.clipboard.writeText(number).then(() => {
             let currentCopy = parseInt(copyCount.textContent);
             copyCount.textContent = currentCopy + 1;
-            alert(`Copied: ${number}`);
+           // alert(`Copied: ${number}`);
         }).catch(err => {
             console.error('Failed to copy:', err);
         });

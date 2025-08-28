@@ -11,7 +11,7 @@
     const copyButtons = document.querySelectorAll('.bg-gray-200.text-gray-700');
     const callButtons = document.querySelectorAll('.btn-call');
 
-    // Heart button functionality (increment life)
+    
     heartButtons.forEach(button => {
         button.addEventListener('click', () => {
             let currentLife = parseInt(lifeCount.textContent);
